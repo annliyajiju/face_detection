@@ -21,3 +21,18 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+# Environment variables
+.env
+
+# VS Code
+.vscode/
+
+# JetBrains IDEs
+.idea/
+
+# Media files (optional)
+*.mp4
+*.avi
+
+# OS files
+Thumbs.db
