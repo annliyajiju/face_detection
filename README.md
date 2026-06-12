@@ -1,70 +1,105 @@
-# Getting Started with Create React App
+# Face Capture Application
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A React-based face capture system that uses MediaPipe FaceMesh for real-time face detection and validation before allowing image capture.
 
-## Available Scripts
+## Features
 
-In the project directory, you can run:
+* Real-time webcam preview using React Webcam
+* Face detection using MediaPipe FaceMesh
+* Full-face validation before capture
+* Face alignment verification
+* Automatic photo capture after successful face detection
+* Retake photo functionality
+* Face scoring system based on:
 
-### `npm start`
+  * Face size
+  * Face position
+  * Face symmetry
+  * Eye visibility
+  * Mouth visibility
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Technologies Used
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+* React
+* React Webcam
+* MediaPipe FaceMesh
+* JavaScript
+* HTML/CSS
 
-### `npm test`
+## Project Structure
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```text
+src/
+├── components/
+│   ├── CameraView.js
+│   ├── FaceCamera.js
+│   └── capturePhoto.js
+│
+├── hooks/
+│   ├── useFaceDetection.js
+│   └── useHandDetection.js
+│
+├── utils/
+│   └── faceValidator.js
+│
+├── App.js
+└── index.js
+```
 
-### `npm run build`
+## Installation
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+1. Clone the repository
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```bash
+git clone <repository-url>
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+2. Navigate to the project directory
 
-### `npm run eject`
+```bash
+cd face-capture-app
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+3. Install dependencies
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```bash
+npm install
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+4. Start the development server
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+```bash
+npm start
+```
 
-## Learn More
+The application will run on:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+```text
+http://localhost:3000
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## How It Works
 
-### Code Splitting
+1. The webcam captures live video.
+2. MediaPipe FaceMesh detects facial landmarks.
+3. Facial landmarks are validated using custom rules.
+4. A face score is generated.
+5. When the face meets the required criteria, the system allows image capture.
+6. The captured image is displayed with an option to retake.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## Future Enhancements
 
-### Analyzing the Bundle Size
+* Hand obstruction detection
+* Multiple face rejection
+* Face angle validation
+* Image quality assessment
+* Backend image upload support
+* User authentication
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## Author
 
-### Making a Progressive Web App
+Annliya Jiju
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+## License
 
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+This project is created for educational and learning purposes.
