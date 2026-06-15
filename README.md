@@ -10,6 +10,7 @@ A React-based face capture system that uses MediaPipe FaceMesh for real-time fac
 * Face alignment verification
 * Automatic photo capture after successful face detection
 * Retake photo functionality
+* no detection of multiple face
 * Face scoring system based on:
 
   * Face size
@@ -89,8 +90,7 @@ http://localhost:3000
 
 ## Future Enhancements
 
-* Hand obstruction detection
-* Multiple face rejection
+
 * Face angle validation
 * Image quality assessment
 * Backend image upload support
