@@ -1,9 +1,9 @@
 
 
 export const getFaceScore = (lm) => {
-  if (!lm||lm.length<468) {
-    return 0;
+  if (!lm || lm.length < 468) {
     console.log("No face detected");
+    return 0;
   }
   console.log("Calculating face score with landmarks:", lm.length);
   // Face bounds
