@@ -18,6 +18,8 @@ A React-based face capture system that uses MediaPipe FaceMesh for real-time fac
   * Face symmetry
   * Eye visibility
   * Mouth visibility
+ ## Hosted Link 
+ https://face-detection-m680.onrender.com/
 
 ## Technologies Used
 
