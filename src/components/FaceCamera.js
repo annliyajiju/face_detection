@@ -1,33 +1,63 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useCallback } from "react";
 import CameraView from "./CameraView";
 import { useFaceDetection } from "../hooks/useFaceDetection";
 import { getFaceScore } from "../utils/faceValidator";
+import { compareFaces } from "../utils/faceMatcher";
 
 const FaceCamera = () => {
   const webcamRef = useRef(null);
+
   const [capturedImage, setCapturedImage] = useState(null);
   const [countdown, setCountdown] = useState(3);
   const [webcamReady, setWebcamReady] = useState(false);
   const [cameraError, setCameraError] = useState(null);
   const [captureMessage, setCaptureMessage] = useState("");
-  const { landmarks,faceCount } = useFaceDetection(webcamRef);
+  const [status, setStatus] = useState("");
+
+  const { landmarks, faceCount } = useFaceDetection(webcamRef);
+
   const score = landmarks ? getFaceScore(landmarks) : 0;
-  const validFace = score > 70&& faceCount === 1; // Ensure only one face is detecteds
-  const videoReady = !!webcamRef.current?.video?.readyState && webcamRef.current.video.readyState >= 3;
+
+  const validFace =
+    landmarks &&
+    score > 70 &&
+    faceCount === 1;
+
+  const videoReady =
+    !!webcamRef.current?.video?.readyState &&
+    webcamRef.current.video.readyState >= 3;
+
+  const capturePhoto = useCallback(() => {
+    if (
+      !webcamRef.current ||
+      !webcamRef.current.getScreenshot ||
+      !videoReady
+    ) {
+      setCaptureMessage("Waiting for video...");
+      return;
+    }
+
+    const imageSrc = webcamRef.current.getScreenshot();
+
+    if (!imageSrc) {
+      setCaptureMessage("Capture failed");
+      return;
+    }
+
+    setCapturedImage(imageSrc);
+    setCaptureMessage("Image captured!");
+  }, [videoReady]);
 
   useEffect(() => {
-    if (!webcamReady || !videoReady || !validFace || capturedImage) {
+    if (
+      !webcamReady ||
+      !videoReady ||
+      !validFace ||
+      capturedImage
+    ) {
       setCountdown(3);
-      setCaptureMessage("");
       return;
     }
-
-    if (!webcamRef.current?.getScreenshot) {
-      setCaptureMessage("Waiting for webcam screenshot readiness...");
-      return;
-    }
-
-    setCaptureMessage("Preparing to capture...");
 
     if (countdown <= 0) {
       capturePhoto();
@@ -35,42 +65,68 @@ const FaceCamera = () => {
     }
 
     const timer = setTimeout(() => {
-      setCountdown((current) => current - 1);
+      setCountdown((prev) => prev - 1);
     }, 1000);
 
     return () => clearTimeout(timer);
-  }, [webcamReady, videoReady, validFace, capturedImage, countdown]);
+  }, [
+    webcamReady,
+    videoReady,
+    validFace,
+    capturedImage,
+    countdown,
+    capturePhoto,
+  ]);
 
-  const capturePhoto = () => {
-    console.log("capturePhoto called", {
-      webcamReady,
-      videoReady,
-      validFace,
-      capturedImage,
-      countdown,
-      screenshotReady: !!webcamRef.current?.getScreenshot,
-      videoSrcObject: !!webcamRef.current?.video?.srcObject,
-      readyState: webcamRef.current?.video?.readyState,
-    });
-
-    if (!webcamRef.current || !webcamRef.current.getScreenshot || !videoReady) {
-      setCaptureMessage("Waiting for video to become ready...");
-      setCountdown(1);
+  const registerFace = () => {
+    if (!validFace) {
+      alert("Align your face properly");
       return;
     }
 
-    const imageSrc = webcamRef.current.getScreenshot();
-
-    console.log("screenshot result", { imageSrc });
-
-    if (!imageSrc) {
-      setCaptureMessage("Capture failed. Retrying...");
-      setCountdown(1);
+    if (faceCount !== 1) {
+      alert("Only one face allowed");
       return;
     }
 
-    setCaptureMessage("Image captured!");
-    setCapturedImage(imageSrc);
+    localStorage.setItem(
+      "registeredFace",
+      JSON.stringify(landmarks)
+    );
+
+    setStatus("✅ Face Registered Successfully");
+  };
+
+  const authenticateFace = () => {
+    if (!validFace) {
+      alert("Align your face properly");
+      return;
+    }
+
+    if (faceCount !== 1) {
+      alert("Only one face allowed");
+      return;
+    }
+
+    const registered = JSON.parse(
+      localStorage.getItem("registeredFace")
+    );
+
+    if (!registered) {
+      alert("No registered face found");
+      return;
+    }
+
+    const matched = compareFaces(
+      registered,
+      landmarks
+    );
+
+    if (matched) {
+      setStatus("✅ Authentication Success");
+    } else {
+      setStatus("❌ Authentication Failed");
+    }
   };
 
   const retakePhoto = () => {
@@ -81,7 +137,7 @@ const FaceCamera = () => {
 
   return (
     <div style={{ textAlign: "center" }}>
-      <h2>📸 Full Face Capture System</h2>
+      <h2>📸 Face Authentication System</h2>
 
       <CameraView
         ref={webcamRef}
@@ -90,53 +146,85 @@ const FaceCamera = () => {
           setCameraError(null);
         }}
         onUserMediaError={(error) => {
-          setCameraError(error?.message || "Unable to access camera.");
+          setCameraError(
+            error?.message || "Unable to access camera"
+          );
         }}
       />
 
       {cameraError ? (
-        <p style={{ color: "red" }}>{cameraError}</p>
+        <p style={{ color: "red" }}>
+          {cameraError}
+        </p>
       ) : (
-        <p>Face Score: {landmarks ? score : "Waiting for face detection..."}</p>
+        <p>
+          Face Score:{" "}
+          {landmarks
+            ? score.toFixed(2)
+            : "Waiting for face detection..."}
+        </p>
       )}
 
-      {validFace && !capturedImage ? (
+      {validFace && !capturedImage && (
         <>
           <h3>Capturing in {countdown}...</h3>
-          <p style={{ color: "#555" }}>{captureMessage}</p>
-          <p style={{ color: "#999", fontSize: "0.9rem" }}>
-            Webcam ready: {webcamReady ? "yes" : "no"}
-          </p>
+          <p>{captureMessage}</p>
         </>
-      ) : null}
+      )}
 
-      <h3 style={{ color: validFace ? "green" : "red" }}>
-        {validFace ? "✔ Full Face Detected" : "❌ Align Full Face Properly"}
+      <div style={{ margin: "20px" }}>
+        <button
+          onClick={registerFace}
+          disabled={!validFace}
+        >
+          Register Face
+        </button>
+
+        <button
+          onClick={authenticateFace}
+          disabled={!validFace}
+          style={{ marginLeft: "10px" }}
+        >
+          Authenticate
+        </button>
+      </div>
+
+      <h3
+        style={{
+          color: validFace ? "green" : "red",
+        }}
+      >
+        {validFace
+          ? "✔ Full Face Detected"
+          : "❌ Align Full Face Properly"}
       </h3>
 
-      {!capturedImage && !validFace && (
-        <p style={{ color: "#555" }}>
-          Automatic capture starts when your face is fully aligned.
-        </p>
-        
-      )}
       {faceCount > 1 && (
-  <h3 style={{ color: "red" }}>
-    ❌ Multiple Faces Detected
-  </h3>
-)}
+        <h3 style={{ color: "red" }}>
+          ❌ Multiple Faces Detected
+        </h3>
+      )}
 
-      {capturedImage ? (
+      {status && <h3>{status}</h3>}
+
+      {capturedImage && (
         <div>
           <h3>📷 Captured Photo</h3>
-          <img src={capturedImage} alt="Captured" width="300" />
+
+          <img
+            src={capturedImage}
+            alt="Captured"
+            width="300"
+          />
+
           <br />
           <br />
-          <button type="button" onClick={retakePhoto}>
+
+          <button onClick={retakePhoto}>
             🔄 Retake Photo
           </button>
         </div>
-      ) : null}
+      )}
     </div>
   );
 };

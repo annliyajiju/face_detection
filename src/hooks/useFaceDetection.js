@@ -8,14 +8,14 @@ export const useFaceDetection = (videoRef) => {
 
   useEffect(() => {
     const faceMesh = new FaceMesh({
-      locateFile: (file) =>
-        `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`,
-    });
+  locateFile: (file) =>
+    `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh@0.4/${file}`,
+});
 
     faceMesh.setOptions({
       // allow detecting multiple faces so we can reject when more than one is present
-      maxNumFaces: 4,
-      refineLandmarks: true,
+      maxNumFaces: 1,
+      refineLandmarks:false,
       minDetectionConfidence: 0.5,
       minTrackingConfidence: 0.5,
     });
