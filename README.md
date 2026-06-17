@@ -1,107 +1,230 @@
-# Face Capture Application
+# Real-Time Face Detection & Authentication System
 
-A React-based face capture system that uses MediaPipe FaceMesh for real-time face detection and validation before allowing image capture.
+## Overview
+
+This project is a browser-based Face Detection and Face Authentication System developed using React.js and MediaPipe Face Mesh.
+
+The application captures webcam input, detects facial landmarks in real time, validates face alignment, and performs user authentication by comparing facial landmark data.
+
+The system runs entirely on the client side and does not require a backend server.
+
+---
 
 ## Features
 
-* Real-time webcam preview using React Webcam
-* Face detection using MediaPipe FaceMesh
-* Full-face validation before capture
-* Face alignment verification
-* Automatic photo capture after successful face detection
-* Retake photo functionality
-* no detection of multiple face
-* Face scoring system based on:
+* Real-time face detection using MediaPipe Face Mesh
+* Detection of multiple faces
+* Face alignment validation
+* Face quality scoring
+* Automatic image capture with countdown
+* Face registration
+* Face authentication
+* Webcam integration
+* Local storage-based face data persistence
 
-  * Face size
-  * Face position
-  * Face symmetry
-  * Eye visibility
-  * Mouth visibility
- ## Hosted Link 
- https://face-detection-m680.onrender.com/
+---
+## Hosted Link
+https://face-detection-m680.onrender.com/
 
 ## Technologies Used
 
-* React
-* React Webcam
-* MediaPipe FaceMesh
+* React.js
 * JavaScript
-* HTML/CSS
+* MediaPipe Face Mesh
+* Webcam API
+* Local Storage
+* CSS
+
+---
+
+## System Workflow
+
+### 1. Camera Initialization
+
+* User grants webcam permission.
+* Webcam stream starts.
+* Application waits until the camera becomes ready.
+
+### 2. Face Detection
+
+* MediaPipe Face Mesh processes webcam frames.
+* Facial landmarks are extracted.
+* Number of faces is calculated.
+
+Requirements:
+
+* Exactly one face must be visible.
+* Multiple faces are rejected.
+
+### 3. Face Validation
+
+The application calculates a Face Score based on:
+
+* Face visibility
+* Face position
+* Landmark consistency
+* Face alignment
+
+Conditions:
+
+Face Score > 70
+
+AND
+
+Face Count = 1
+
+Only then the face is considered valid.
+
+### 4. Automatic Capture
+
+When a valid face is detected:
+
+3...
+
+2...
+
+1...
+
+The application automatically captures an image from the webcam.
+
+### 5. Face Registration
+
+When the user clicks **Register Face**:
+
+* Current facial landmarks are extracted.
+* Landmark data is stored in browser localStorage.
+
+### 6. Face Authentication
+
+When the user clicks **Authenticate**:
+
+* Registered facial landmarks are loaded.
+* Current facial landmarks are captured.
+* Both landmark sets are compared.
+
+### 7. Authentication Result
+
+If similarity exceeds the predefined threshold:
+
+Authentication Success
+
+Otherwise:
+
+Authentication Failed
+
+---
 
 ## Project Structure
 
-```text
 src/
+
 ├── components/
-│   ├── CameraView.js
-│   ├── FaceCamera.js
-│   └── capturePhoto.js
+
+│ ├── CameraView.js
+
+│ └── FaceCamera.js
+
 │
+
 ├── hooks/
-│   ├── useFaceDetection.js
-│   └── useHandDetection.js
+
+│ └── useFaceDetection.js
+
 │
+
 ├── utils/
-│   └── faceValidator.js
+
+│ ├── faceValidator.js
+
+│ └── faceMatcher.js
+
 │
-├── App.js
-└── index.js
-```
+
+└── App.js
+
+---
 
 ## Installation
 
-1. Clone the repository
+Clone the repository:
 
 ```bash
 git clone <repository-url>
 ```
 
-2. Navigate to the project directory
-
-```bash
-cd face-capture-app
-```
-
-3. Install dependencies
+Install dependencies:
 
 ```bash
 npm install
 ```
 
-4. Start the development server
+Start the development server:
 
 ```bash
 npm start
 ```
 
-The application will run on:
+---
 
-```text
-http://localhost:3000
-```
+## Future Improvements
 
-## How It Works
+### Backend Integration
 
-1. The webcam captures live video.
-2. MediaPipe FaceMesh detects facial landmarks.
-3. Facial landmarks are validated using custom rules.
-4. A face score is generated.
-5. When the face meets the required criteria, the system allows image capture.
-6. The captured image is displayed with an option to retake.
+* Node.js
+* Express.js
+* MongoDB
 
-## Future Enhancements
+### Advanced Face Recognition
 
+* Face-api.js
+* InsightFace
+* FaceNet
 
-* Face angle validation
-* Image quality assessment
-* Backend image upload support
-* User authentication
+### Security Enhancements
+
+* JWT Authentication
+* Database Storage
+* User Accounts
+
+### Anti-Spoofing Protection
+
+* Photo attack detection
+* Replay attack prevention
+* Liveness detection
+
+---
+
+## Limitations
+
+Current version uses client-side storage and landmark comparison only.
+
+Limitations include:
+
+* No backend server
+* No database
+* LocalStorage can be cleared
+* Not suitable for production security
+* Landmark-based matching only
+
+---
+
+## Learning Outcomes
+
+Through this project, I learned:
+
+* React component architecture
+* React Hooks
+* Webcam integration
+* Real-time computer vision concepts
+* Facial landmark detection
+* Client-side authentication workflows
+* State management
+* Browser storage mechanisms
+
+---
 
 ## Author
 
 Annliya Jiju
 
-## License
-
-This project is created for educational and learning purposes.
+Developed as a learning project to explore real-time face detection and biometric authentication concepts using React and MediaPipe.
