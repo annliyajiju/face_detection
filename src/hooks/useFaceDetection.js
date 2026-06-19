@@ -14,7 +14,7 @@ export const useFaceDetection = (videoRef) => {
 
     faceMesh.setOptions({
       // allow detecting multiple faces so we can reject when more than one is present
-      maxNumFaces: 1,
+      maxNumFaces: 4,
       refineLandmarks:false,
       minDetectionConfidence: 0.5,
       minTrackingConfidence: 0.5,
